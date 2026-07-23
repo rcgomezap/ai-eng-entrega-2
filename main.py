@@ -8,13 +8,14 @@ from langchain_core.prompts import ChatPromptTemplate
 
 load_dotenv()
 
-model = ChatOpenAI(model='openrouter/free', base_url=os.getenv('OPENAI_BASE_URL'), temperature=float(os.getenv("TEMPERATURE", "0.7")))
+model = ChatOpenAI(model=os.getenv("LLM_MODEL", "gpt-4o"), base_url=os.getenv('OPENAI_BASE_URL'), temperature=float(os.getenv("TEMPERATURE", "0.7")))
 parser = StrOutputParser()
 
 question_chain = (
-    ChatPromptTemplate.from_template(
-    "Answer this consicely in the language from the inquiry: {question}"
-    )
+    ChatPromptTemplate.from_messages([
+        ("system", "Answer this consicely in the language from the inquiry"),
+        ("user", "{question}")
+    ])
     | model
     | parser
 )
